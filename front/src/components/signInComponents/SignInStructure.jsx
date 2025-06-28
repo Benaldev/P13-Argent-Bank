@@ -1,22 +1,45 @@
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 const SignInStructure = () => {
-  const [inputUserName, setInputUserName] = useState("");
-  const [inputPassword, setInputPassword] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
+  const navigate = useNavigate();
 
-  const handleChangeUserName = (e) => {
-    setInputUserName(e.target.value);
+  const handleChangeEmail = (e) => {
+    setEmail(e.target.value);
   };
 
   const handleChangePassword = (e) => {
-    setInputPassword(e.target.value);
+    setPassword(e.target.value);
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    setInputPassword("");
-    setInputUserName("");
+    setError("");
+
+    try {
+      const response = await fetch("http://localhost:3001/api/v1/user/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password }),
+      });
+
+      const data = await response.json();
+
+      if (data.body.token) {
+        localStorage.setItem("authToken", data.body.token);
+        console.log("auth reussie");
+        setEmail("");
+        setPassword("");
+        navigate("/user");
+      } else {
+        setError("Email ou mot de passe incorrect");
+      }
+    } catch {
+      setError("Erreur réseau, réessaye plus tard");
+    }
   };
 
   return (
@@ -26,12 +49,12 @@ const SignInStructure = () => {
         <h1>Sign In</h1>
         <form onSubmit={handleSubmit}>
           <div className="input-wrapper">
-            <label htmlFor="username">Username</label>
+            <label htmlFor="email">Email</label>
             <input
-              onChange={handleChangeUserName}
+              onChange={handleChangeEmail}
               type="text"
-              id="username"
-              value={inputUserName}
+              id="email"
+              value={email}
             />
           </div>
           <div className="input-wrapper">
@@ -40,7 +63,7 @@ const SignInStructure = () => {
               onChange={handleChangePassword}
               type="password"
               id="password"
-              value={inputPassword}
+              value={password}
             />
           </div>
           <div className="input-remember">

@@ -1,7 +1,7 @@
-import userStructure from "../../components/userComponents/userStructure";
+import UserStructure from "../../components/userComponents/userStructure";
 
 const User = () => {
-  return <userStructure />;
+  return <UserStructure />;
 };
 
 export default User;
