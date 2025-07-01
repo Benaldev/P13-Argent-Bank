@@ -56,7 +56,20 @@ body {
   margin-right: 0.5rem;
 }
 
-.main-nav-item:hover {
+.main-nav-item-btn {
+  all: unset;
+  margin-right: 0.5rem;
+  color: #2c3e50;
+  font-family: inherit;
+  font-weight: bold;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+}
+
+.main-nav-item:hover,
+.main-nav-item-btn:hover {
   text-decoration: underline;
 }
 
