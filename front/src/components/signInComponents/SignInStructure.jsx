@@ -52,7 +52,7 @@ const SignInStructure = () => {
             <label htmlFor="email">Email</label>
             <input
               onChange={handleChangeEmail}
-              type="text"
+              type="email"
               id="email"
               value={email}
             />
