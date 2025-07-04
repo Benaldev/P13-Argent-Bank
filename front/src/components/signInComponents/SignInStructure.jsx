@@ -28,6 +28,11 @@ const SignInStructure = () => {
 
       const data = await response.json();
 
+      if (!response.ok) {
+        setError("Email ou mot de passe incorrect");
+        return;
+      }
+
       if (data.body.token) {
         localStorage.setItem("authToken", data.body.token);
         console.log("auth reussie");
@@ -35,7 +40,7 @@ const SignInStructure = () => {
         setPassword("");
         navigate("/user");
       } else {
-        setError("Email ou mot de passe incorrect");
+        setError("Problème serveur");
       }
     } catch {
       setError("Erreur réseau, réessaye plus tard");
@@ -70,6 +75,9 @@ const SignInStructure = () => {
             <input type="checkbox" id="remember-me" />
             <label htmlFor="remember-me">Remember me</label>
           </div>
+
+          {error && <p className="error-message">{error}</p>}
+
           <button type="submit" className="sign-in-button">
             Sign In
           </button>
