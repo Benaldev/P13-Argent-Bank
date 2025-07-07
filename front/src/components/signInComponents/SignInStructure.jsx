@@ -1,19 +1,28 @@
-import React, { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 
 const SignInStructure = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+  const [rememberMe, setRememberMe] = useState(false);
   const navigate = useNavigate();
 
-  const handleChangeEmail = (e) => {
-    setEmail(e.target.value);
-  };
+  // on rempli les champs si remeber me est utilisé
+  useEffect(() => {
+    const savedEmail = localStorage.getItem("rememberedEmail");
+    const savedPassword = localStorage.getItem("rememberedPassword");
 
-  const handleChangePassword = (e) => {
-    setPassword(e.target.value);
-  };
+    if (savedEmail && savedPassword) {
+      setEmail(savedEmail);
+      setPassword(savedPassword);
+      setRememberMe(true);
+    }
+  }, []);
+
+  const handleChangeEmail = (e) => setEmail(e.target.value);
+  const handleChangePassword = (e) => setPassword(e.target.value);
+  const handleRememberMe = (e) => setRememberMe(e.target.checked);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -35,7 +44,17 @@ const SignInStructure = () => {
 
       if (data.body.token) {
         localStorage.setItem("authToken", data.body.token);
-        console.log("auth reussie");
+
+        // gestion stockage email + password
+        if (rememberMe) {
+          localStorage.setItem("rememberedEmail", email);
+          localStorage.setItem("rememberedPassword", password);
+        } else {
+          localStorage.removeItem("rememberedEmail");
+          localStorage.removeItem("rememberedPassword");
+        }
+
+        console.log("auth réussie");
         setEmail("");
         setPassword("");
         navigate("/user");
@@ -60,6 +79,7 @@ const SignInStructure = () => {
               type="email"
               id="email"
               value={email}
+              autoComplete="email"
             />
           </div>
           <div className="input-wrapper">
@@ -69,10 +89,16 @@ const SignInStructure = () => {
               type="password"
               id="password"
               value={password}
+              autoComplete="current-password"
             />
           </div>
           <div className="input-remember">
-            <input type="checkbox" id="remember-me" />
+            <input
+              type="checkbox"
+              id="remember-me"
+              checked={rememberMe}
+              onChange={handleRememberMe}
+            />
             <label htmlFor="remember-me">Remember me</label>
           </div>
 
